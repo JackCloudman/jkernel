@@ -1,55 +1,61 @@
 # JKernel
 
-Un kernel minimalista experimental escrito en Rust.
+Un kernel minimalista experimental escrito en Rust basado en el tutorial [Writing an OS in Rust](https://os.phil-opp.com/es/minimal-rust-kernel/).
 
 ## 🚀 Descripción
 
-Este proyecto es un kernel básico desarrollado en Rust sin dependencia de la biblioteca estándar (no_std), diseñado para ejecutarse directamente en hardware sin un sistema operativo subyacente.
+Este proyecto es un kernel básico desarrollado en Rust sin dependencia de la biblioteca estándar (no_std), diseñado para ejecutarse directamente en hardware sin un sistema operativo subyacente. Actualmente muestra un mensaje "JKernel Started" con un borde animado en la pantalla.
 
 ## ⚙️ Requisitos Previos
 
 - Rust (última versión estable)
 - cargo
-- Para desarrollo cruzado:
-  - Target `thumbv7em-none-eabihf` (u otro target bare metal)
-  ```bash
-  rustup target add thumbv7em-none-eabihf
-  ```
+- QEMU (para emular el kernel)
+- `rustup component add llvm-tools-preview` (para la herramienta bootimage)
+- `cargo install bootimage` (para crear la imagen de arranque)
 
-## 🛠️ Compilación
+## 🛠️ Compilación y Ejecución
 
-### Para target bare metal:
+### Compilar el kernel
 ```bash
-cargo build --target thumbv7em-none-eabihf
+cargo build
 ```
 
-### Para sistemas host específicos:
-
-**Linux:**
+### Crear la imagen de arranque
 ```bash
-cargo rustc -- -C link-arg=-nostartfiles
+cargo bootimage
 ```
 
-**Windows:**
+### Ejecutar en QEMU (forma manual)
 ```bash
-cargo rustc -- -C link-args="/ENTRY:_start /SUBSYSTEM:console"
+qemu-system-x86_64 -drive format=raw,file=target/x86_64-jack_os/debug/bootimage-jkernel.bin
 ```
 
-**macOS:**
+### Ejecutar con cargo run (más sencillo)
 ```bash
-cargo rustc -- -C link-args="-e __start -static -nostartfiles"
+cargo run
 ```
+Esto automáticamente compila el kernel, crea la imagen de arranque y la ejecuta en QEMU.
+
+## 🚀 Ejecutar en hardware real
+
+Para ejecutar en hardware real, puedes transferir la imagen a una memoria USB:
+```bash
+dd if=target/x86_64-jack_os/debug/bootimage-jkernel.bin of=/dev/sdX && sync
+```
+¡ADVERTENCIA! Reemplaza `/dev/sdX` con la ruta correcta a tu dispositivo USB. Todo el contenido del dispositivo será sobrescrito.
 
 ## 🔍 Características
 
 - Binario autónomo sin dependencia de la biblioteca estándar
 - Implementación personalizada del manejador de pánico
 - Punto de entrada personalizado (_start)
+- Animación de colores en el texto VGA
 - Sin desenrollado de pila en caso de pánico
 
 ## 📝 Referencias
 
-Este proyecto está inspirado en la serie de blog [Writing an OS in Rust](https://os.phil-opp.com/es/freestanding-rust-binary/) por Philipp Oppermann.
+Este proyecto está basado en la serie de blog [Writing an OS in Rust](https://os.phil-opp.com/es/minimal-rust-kernel/) por Philipp Oppermann.
 
 ## 📄 Licencia
 
