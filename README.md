@@ -1,4 +1,5 @@
 # JKernel
+![image](https://github.com/user-attachments/assets/9102904c-04e3-4422-a930-2f99b86a00ba)
 
 Un kernel minimalista experimental escrito en Rust basado en el tutorial [Writing an OS in Rust](https://os.phil-opp.com/es/minimal-rust-kernel/).
 
